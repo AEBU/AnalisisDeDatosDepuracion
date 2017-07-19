@@ -7,8 +7,8 @@
   df.sucre.localidad=make.names("Localidad")
   df.sucre.seguidores=make.names("Seguidores")
   df.sucre.seguidos=make.names("Seguidos")
-  df.sucre.ratio=make.names("MetricaRadio")
-  
+  df.sucre.ratio=make.names("MetricaUser")
+  df.sucre.ratio=make.names("MetricaTweet")
 
   
   for(i in 1:NROW(df.sucre.users$Usuario)){

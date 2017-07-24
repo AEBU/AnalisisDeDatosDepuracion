@@ -1,3 +1,11 @@
+# MAQUINAS DE SOPORTE VECTORIAL
+# INTEGRANTES: Alexis Bautista
+#              Bryan Catucuamba
+#              David Jácome
+#              Alejandro Naranjo
+#              Richard Quimbiulco
+
+
 # Empleamos la libreria RTextTools, que sirve para la clasificación automática
 # de textos usando Algoritmos de Aprendizaje Supervisado 
 library(RTextTools)

@@ -1,4 +1,5 @@
 #Relevancia
+#https://stackoverflow.com/questions/5648772/get-tweet-count-via-twitter-package
 
   #Obtenemos los datos
   library(readr)

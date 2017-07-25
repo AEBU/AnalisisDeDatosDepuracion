@@ -43,8 +43,10 @@ TweetsEntrenamiento <-
 TweetsPrueba <-
   read_csv("~/AnalisisDatos/Maquinas/DatosFinalesUnidos/TweetsPrueba.csv")
 
-TweetsEntrenamiento$depurado <- tolower(iconv(TweetsEntrenamiento$depurado,"latin1", "UTF-8"))
-TweetsPrueba$depurado <- tolower(iconv(TweetsPrueba$depurado,"latin1", "UTF-8"))
+#TweetsEntrenamiento$depurado <- iconv(TweetsEntrenamiento$depurado,"latin1", "UTF-8")
+#TweetsPrueba$depurado <- iconv(TweetsPrueba$depurado,"latin1", "UTF-8")
+
+#############################################################################################
 
 #MAQUINAS DE SOPORTE VECTORIAL
 
@@ -90,23 +92,49 @@ TweetsFinal <- as.data.frame(rbind(TweetsEntrenamiento, TweetsPrueba))
 
 library(RTextTools)
 
-matriz <- create_matrix(TweetsFinal$depurado,
+matriz <- create_matrix(TweetsFinal$text,
                                      language = "spanish",
                                      removeNumbers = TRUE,
                                      removePunctuation = TRUE,
                                      removeStopwords = TRUE)
+
 
 contenedor <- create_container(matriz, TweetsFinal$polaridadSVM,
                                             trainSize = 1:367,
                                             testSize = 368:8066,
                                             virgin = FALSE)
 
-model <- train_model(contenedor, "SVM", kernel = "polynomial")
+model <- train_model(contenedor, "SVM")
 
 clasificacion <- classify_model(contenedor, model)
 
 TweetsFinal$polaridadSVM[368:8066] <- as.numeric(clasificacion$SVM_LABEL)-1
 
+###########################################################################################
+###TABLA DE CONFUSION
+
+v <- sample(367, 293)
+x<-c(1:367)
+y<-c(1:367)
+z<-data.frame(x,y)
+i <- z[v,]
+j <- z[-v,]
+
+i1 <- i$x
+j1 <- j$x
+
+contenedor <- create_container(matriz, TweetsFinal$polaridadSVM,
+                               trainSize = i1,
+                               testSize = j1,
+                               virgin = FALSE)
+
+model <- train_model(contenedor, "SVM", kernel = "polynomial")
+
+clasificacion <- classify_model(contenedor, model)
+
+muestraVerificacion <- c(rep(0,73))
+
+muestraVerificacion <- as.numeric(clasificacion$SVM_LABEL)-1
 
 
 ###########################################################################################
@@ -151,7 +179,7 @@ diccionarioPositivo <-
     "complacen",
     "favorito",
     "quisiera",
-    "quiero","puede","pueden","programen","podrian","podrían","queremos",""
+    "quiero","puede","pueden","programen","podrian","podrían","queremos"
   )
 
 TweetsFinal$polaridadDiccionarios <- c(rep(0, NROW(TweetsFinal)))
@@ -174,4 +202,8 @@ for (i in 1:NROW(TweetsFinal)) {
   }
 }
 
+
+t <- TweetsFinal[,c(1,28)]
+write.csv(x = t,
+          file = "C:/Users/David/Documents/AnalisisDatos/Maquinas/DatosFinalesUnidos/paraAlexis.csv", row.names = FALSE)
 ###########################################################################################

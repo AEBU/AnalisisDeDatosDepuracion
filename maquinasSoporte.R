@@ -44,3 +44,34 @@ tweets$polaridad[21:100] <- as.numeric(clasificacion$SVM_LABEL)-1
 
 # Visualizamos los tweets y su respectiva polaridad
 View(tweets[,c(2,18)])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TweetsFinal<-TweetsFinal[-3454,]
+
+t <- TweetsFinal[,c(1,28)]
+write.csv(x = t,
+          file = "C:/Users/David/Documents/AnalisisDatos/Maquinas/DatosFinalesUnidos/paraAlexis.csv", row.names = FALSE)

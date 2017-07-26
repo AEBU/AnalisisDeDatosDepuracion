@@ -34,8 +34,8 @@ for (i in 1:NROW(tweets)) {
   #Remover retweets
   sinRT <- gsub("(RT|via)((?:\\b\\W*@\\w+)+)", "", texto)
   
-  #Remover cuentas
   sinCuentas <- gsub("@\\w+", "", sinRT)
+  #Remover cuentas
   
   #Remover simbolos de puntuacion
   sinSimbolos <- gsub("[[:punct:]]", "", sinCuentas)

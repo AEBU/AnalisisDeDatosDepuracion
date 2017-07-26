@@ -582,3 +582,37 @@ for (i in 1:NROW(TweetsFinal)) {
 
 #guardamos el dataframe en un archivo de texto csv
 write.csv(x = TweetsFinal, file = "C:/AnalisisDeDatos/TweetsFinalCompleto.csv", row.names = FALSE)
+
+#Para wordcloud
+library(wordcloud)
+positive <- subset(tweetsSparce, tweetsSparce$sentiment==1)
+
+#Luego ya no nos sirve la variable  SENTIMENT, cuando hagamos la nuebe de palabras, YA QUE como todos los tweets son positivos, 
+positive$sentiment=NULL
+
+
+View(positivas)
+#Tenemos un dataframe con frecuencias de palabras, todas las palbras con su ffrecuencia individual
+positivas= as.data.frame(colSums(positive))
+View(head(positivas[order(positivas$`colSums(positive)`,decreasing = T),]))
+#TEnemos que poner las palbras no como indices si no como variables
+positivas$words= row.names(positivas)
+#Creamos una variable que se llama words, con words la palabra, antes era solo el indice mas no variable
+positivas=positivas[,order(positivas$`colSums(positive)`)]
+positivas=positivas[order(positivas$`colSums(positive)`,decreasing = T),]
+#Renombramos las variables
+colnames(positivas)=c("freq","word")
+table(tweets$polaridadSVM)
+
+#Nuebe de palabras
+
+#Argumentos
+#1  las palabras, la columna que contiene estas palabras
+#2  las frecuencias
+#3  randmo.order quiere decir que el orden que las palabras se van a mostrar  no van a hacer aleatorio, es decir las que mas se mencionan van a estar en el centro
+#4  colors = brewer.pal() para que las palabras vayan cambiando de color según su frecuencia, setemaos el máximo de palabras a mostrar
+x11()
+wordcloud(positivas$word, positivas$freq,random.order=FALSE,colors=brewer.pal(8,"Dark2"),max.words=300)
+
+
+

@@ -585,7 +585,7 @@ write.csv(x = TweetsFinal, file = "C:/AnalisisDeDatos/TweetsFinalCompleto.csv", 
 
 #Para wordcloud
 library(wordcloud)
-positive <- subset(tweetsSparce, tweetsSparce$sentiment==1)
+positive <- subset(tweetsSparce, TweetsFinal$polaridadSVM==1)
 
 #Luego ya no nos sirve la variable  SENTIMENT, cuando hagamos la nuebe de palabras, YA QUE como todos los tweets son positivos, 
 positive$sentiment=NULL
@@ -602,7 +602,7 @@ positivas=positivas[,order(positivas$`colSums(positive)`)]
 positivas=positivas[order(positivas$`colSums(positive)`,decreasing = T),]
 #Renombramos las variables
 colnames(positivas)=c("freq","word")
-table(tweets$polaridadSVM)
+table(TweetsFinal$polaridadSVM)
 
 #Nuebe de palabras
 

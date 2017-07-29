@@ -1,7 +1,7 @@
 
 library(readr)
 TweetsFinal <- 
-  read_csv("C:/Users/Alexis/Desktop/Analisis de Datos-Depuracion/ParaCd/TweetsFinalCompleto.csv")
+  read_csv("C:/Users/David/Documents/AnalisisDatos/Maquinas/ParaCd/TweetsFinalCompleto.csv")
 
 
 
@@ -123,11 +123,11 @@ for (i in 1:NROW(tweets)) {
             } else {
               resultado <-
                 grepl(
-                  "rkmofficial",
+                  "rkmoficial",
                   tweets[i, 30]
                 )
               if (resultado == TRUE) {
-                tweets[i, 31] <- "6"
+                tweets[i, 31] <- "5"
               } else {
                 resultado <-
                   grepl(
@@ -234,6 +234,7 @@ for (i in 1:NROW(tweets)) {
 table(tweets$codArtist)
 View(tweets)
 
+
 #Tweets de las artistas
 
 #Joel Y brian
@@ -244,10 +245,8 @@ tweets2=subset(tweets, tweets$codArtist==2)
 tweets3=subset(tweets, tweets$codArtist==3)
 #Jesus miranda
 tweets4=subset(tweets, tweets$codArtist==4)
-#Kenficcial
+#raking y Kenficcial
 tweets5=subset(tweets, tweets$codArtist==5)
-#RkmOfficial
-tweets6=subset(tweets, tweets$codArtist==6)
 #johannvera
 tweets7=subset(tweets, tweets$codArtist==7)
 #Jbalvin|Jbalvein ecuador
@@ -270,19 +269,99 @@ tweets16=subset(tweets, tweets$codArtist==16)
 
 
 
+##########RELEVANCIA################# total tweets positivos = 1509
 
+totalTweets <- 1509
 
+#Artista 1
+tweets1$relevanciaFinal <- c(rep(0,NROW(tweets1)))
+#enncontramos la relevancia
+tweets1$relevanciaFinal <- ((as.double(tweets1$favoriteCount)+as.double(tweets1$retweetCount))/totalTweets)
+#sacamos la media ponderada, esto va para todos 
+mediaRelevancia1 <- weighted.mean(x = tweets1$relevanciaFinal, w = tweets1$factorPonderacion)
 
+#Artista 2
+tweets2$relevanciaFinal <- c(rep(0,NROW(tweets2)))
+tweets2$relevanciaFinal <- ((as.double(tweets2$favoriteCount)+as.double(tweets2$retweetCount))/totalTweets)
+mediaRelevancia2 <- weighted.mean(x = tweets2$relevanciaFinal, w = tweets2$factorPonderacion)
 
+#Artista 3
+tweets3$relevanciaFinal <- c(rep(0,NROW(tweets3)))
+tweets3$relevanciaFinal <- ((as.double(tweets3$favoriteCount)+as.double(tweets3$retweetCount))/totalTweets)
+mediaRelevancia3 <- weighted.mean(x = tweets3$relevanciaFinal, w = tweets3$factorPonderacion)
 
+#Artista 4
+tweets4$relevanciaFinal <- c(rep(0,NROW(tweets4)))
+tweets4$relevanciaFinal <- ((as.double(tweets4$favoriteCount)+as.double(tweets4$retweetCount))/totalTweets)
+mediaRelevancia4 <- weighted.mean(x = tweets4$relevanciaFinal, w = tweets4$factorPonderacion)
 
+#Artista 5
+tweets5$relevanciaFinal <- c(rep(0,NROW(tweets5)))
+tweets5$relevanciaFinal <- ((as.double(tweets5$favoriteCount)+as.double(tweets5$retweetCount))/totalTweets)
+mediaRelevancia5 <- weighted.mean(x = tweets5$relevanciaFinal, w = tweets5$factorPonderacion)
 
+#Artista 7
+tweets7$relevanciaFinal <- c(rep(0,NROW(tweets7)))
+tweets7$relevanciaFinal <- ((as.double(tweets7$favoriteCount)+as.double(tweets7$retweetCount))/totalTweets)
+mediaRelevancia7 <- weighted.mean(x = tweets7$relevanciaFinal, w = tweets7$factorPonderacion)
 
+#Artista 8
+tweets8$relevanciaFinal <- c(rep(0,NROW(tweets8)))
+tweets8$relevanciaFinal <- ((as.double(tweets8$favoriteCount)+as.double(tweets8$retweetCount))/totalTweets)
+mediaRelevancia8 <- weighted.mean(x = tweets8$relevanciaFinal, w = tweets8$factorPonderacion)
 
+#Artista 9
+tweets9$relevanciaFinal <- c(rep(0,NROW(tweets9)))
+tweets9$relevanciaFinal <- ((as.double(tweets9$favoriteCount)+as.double(tweets9$retweetCount))/totalTweets)
+mediaRelevancia9 <- weighted.mean(x = tweets9$relevanciaFinal, w = tweets9$factorPonderacion)
 
+#Artista 10
+tweets10$relevanciaFinal <- c(rep(0,NROW(tweets10)))
+tweets10$relevanciaFinal <- ((as.double(tweets10$favoriteCount)+as.double(tweets10$retweetCount))/totalTweets)
+mediaRelevancia10 <- weighted.mean(x = tweets10$relevanciaFinal, w = tweets10$factorPonderacion)
 
+#Artista 12
+tweets12$relevanciaFinal <- c(rep(0,NROW(tweets12)))
+tweets12$relevanciaFinal <- ((as.double(tweets12$favoriteCount)+as.double(tweets12$retweetCount))/totalTweets)
+mediaRelevancia12 <- weighted.mean(x = tweets12$relevanciaFinal, w = tweets12$factorPonderacion)
 
+#Artista 13
+tweets13$relevanciaFinal <- c(rep(0,NROW(tweets13)))
+tweets13$relevanciaFinal <- ((as.double(tweets13$favoriteCount)+as.double(tweets13$retweetCount))/totalTweets)
+mediaRelevancia13 <- weighted.mean(x = tweets13$relevanciaFinal, w = tweets13$factorPonderacion)
 
+#Artista 14
+tweets14$relevanciaFinal <- c(rep(0,NROW(tweets14)))
+tweets14$relevanciaFinal <- ((as.double(tweets14$favoriteCount)+as.double(tweets14$retweetCount))/totalTweets)
+mediaRelevancia14 <- weighted.mean(x = tweets14$relevanciaFinal, w = tweets14$factorPonderacion)
 
+#Artista 15
+tweets15$relevanciaFinal <- c(rep(0,NROW(tweets15)))
+tweets15$relevanciaFinal <- ((as.double(tweets15$favoriteCount)+as.double(tweets15$retweetCount))/totalTweets)
+mediaRelevancia15 <- weighted.mean(x = tweets15$relevanciaFinal, w = tweets15$factorPonderacion)
 
+#Artista 16
+tweets16$relevanciaFinal <- c(rep(0,NROW(tweets16)))
+tweets16$relevanciaFinal <- ((as.double(tweets16$favoriteCount)+as.double(tweets16$retweetCount))/totalTweets)
+mediaRelevancia16 <- weighted.mean(x = tweets16$relevanciaFinal, w = tweets16$factorPonderacion)
+
+tablaRelevancias <-
+  rbind(
+    mediaRelevancia1,
+    mediaRelevancia2,
+    mediaRelevancia3,
+    mediaRelevancia4,
+    mediaRelevancia5,
+    mediaRelevancia7,
+    mediaRelevancia8,
+    mediaRelevancia9,
+    mediaRelevancia10,
+    mediaRelevancia12,
+    mediaRelevancia13,
+    mediaRelevancia14,
+    mediaRelevancia15,
+    mediaRelevancia16
+  )
+
+View(tablaRelevancias)
 

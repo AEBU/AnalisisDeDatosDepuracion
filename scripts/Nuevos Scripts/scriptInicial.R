@@ -23,7 +23,15 @@ emisora <- "labrujaecuador"
 #Descargamos los tweets
 listaTweets <- searchTwitter(searchString = emisora, n=3700)
 tweets <- twListToDF(listaTweets)
-nombreArchivo <- paste("C:/Users/David/Documents/AnalisisDatos/Maquinas/scripts/Nuevos Scripts/.xlsx",emisora,"_",fecha,".csv", sep="")
+nombreArchivo <- paste("C:/Users/David/Documents/AnalisisDatos/Maquinas/Datos_David/",emisora,"_",fecha,".csv", sep="")
+write.csv(x=tweets, file=nombreArchivo, col.names = TRUE, row.names = FALSE)
+
+emisora <- "CanelaRadioEc"
+
+#Descargamos los tweets
+listaTweets <- searchTwitter(searchString = emisora, n=3700)
+tweets <- twListToDF(listaTweets)
+nombreArchivo <- paste("C:/Users/David/Documents/AnalisisDatos/Maquinas/Datos_David/",emisora,"_",fecha,".csv", sep="")
 write.csv(x=tweets, file=nombreArchivo, col.names = TRUE, row.names = FALSE)
 
 #Como los tweets no fueron descargados con todas las variables necesarias, debemos
@@ -141,6 +149,8 @@ clasificacion <- classify_model(contenedor, model)
 TweetsFinal$polaridadSVM[368:8066] <- as.numeric(clasificacion$SVM_LABEL)-1
 
 
+
+############################################################################################################
 #APRENDIZAJE NO SUPERVISADO
 
 #Agregamos el diccionario con las palabras positivas, en total tenemos 44 palabras

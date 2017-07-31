@@ -744,34 +744,6 @@ df15 <-
 names(df15) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
 
 
-######################################################################################
-######################################################################################
-#Artista 16
-#enncontramos la relevancia sin ponderacion
-tweets16$RelevanciaArtista <-
-  ((tweets16$favoriteCount + tweets16$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets16$RelevanciaArtistaFP <-
-  tweets16$RelevanciaArtista * tweets16$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia16 <-
-  weighted.mean(x = tweets16$RelevanciaArtista,
-                w = tweets16$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia16 <- 0
-for (i in 1:NROW(tweets16)) {
-  SumaRelevancia16 <- SumaRelevancia16 + tweets16[i, 34]
-}
-
-mediaRelevancia16FP <- SumaRelevancia16 / NROW(tweets16)
-
-df16 <-
-  data.frame("Reik",
-             mediaRelevancia16,
-             mediaRelevancia16FP,
-             SumaRelevancia16)
-names(df16) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
 
 TablaRelevancias <-
   rbind(df1,
@@ -787,8 +759,7 @@ TablaRelevancias <-
         df11,
         df13,
         df14,
-        df15,
-        df16)
+        df15)
 
 ##################################GRÁFICOS
 

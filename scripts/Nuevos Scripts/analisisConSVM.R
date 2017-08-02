@@ -90,27 +90,17 @@ frequencies = DocumentTermMatrix(corpus)
 length(corpus)
 frequencies
 
-#inspect(frequencies[800:805,505:515])
-
 #Para tener un data frame de todas las palabras
 tweetsDePeticiones = as.data.frame(as.matrix(frequencies))
 
-#View(tweetsDePeticiones)
-
 colnames(tweetsDePeticiones) = make.names(colnames(tweetsDePeticiones))
 
-#View(tweetsDePeticiones)
-
-#tweetsDePeticiones$sentiment = TweetsPositivos$polaridadSVM
-
-#View(tweetsDePeticiones)
 
 library(wordcloud)
 
 
 
 positivas = as.data.frame(colSums(tweetsDePeticiones))
-#View(positivas)
 positivas$word = row.names(positivas)
 colnames(positivas) = c("frecuencia", "palabra")
 positivas = positivas[order(positivas$frecuencia, decreasing = T),]
@@ -267,7 +257,8 @@ for (i in 1:NROW(tweets)) {
                                         tweets[i, 32] <- "Reik"
                                       }
                                       else{
-                                        tweets[i, 31] <- "Otros"
+                                        tweets[i, 31] <- "99"
+                                        tweets[i, 32] <- "Otros"
                                       }
                                     }
                                   }
@@ -286,15 +277,12 @@ for (i in 1:NROW(tweets)) {
         }
       }
     }
-  } else {
-    tweets[i, 26] <- "25"
   }
 }
 #table(tweets$CodArtista)
 #table(tweets$NombreArtista)
 
-
-#Tweets de las artistas
+#Filtramos por
 
 #Joel Y Brian
 tweets1 = subset(tweets, tweets$CodArtista == "1")
@@ -329,482 +317,161 @@ tweets15 = subset(tweets, tweets$CodArtista == "15")
 #Reik
 tweets16 = subset(tweets, tweets$CodArtista == "16")
 
+tweetsArtistas <-
+  rbind(
+    tweets1,
+    tweets2,
+    tweets3,
+    tweets4,
+    tweets5,
+    tweets6,
+    tweets7,
+    tweets8,
+    tweets9,
+    tweets10,
+    tweets11,
+    tweets12,
+    tweets13,
+    tweets14,
+    tweets15,
+    tweets16
+  )
 
 
 
-##########RELEVANCIA################# total tweets positivos = 1509
-
-totalTweets <- 1509
-
-######################################################################################
-######################################################################################
-#Artista 1
-#enncontramos la relevancia sin ponderacion
-tweets1$RelevanciaArtista <-
-  ((tweets1$favoriteCount + tweets1$retweetCount) / totalTweets)
+tweetsArtistas$RelevanciaArtista <-
+  ((tweetsArtistas$favoriteCount + tweetsArtistas$retweetCount) / NROW(tweetsArtistas))
 #encontramos la relevancia con ponderacion
-tweets1$RelevanciaArtistaFP <-
-  tweets1$RelevanciaArtista * tweets1$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia1 <-
-  weighted.mean(x = tweets1$RelevanciaArtista,
-                w = tweets1$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia1 <- 0
-for (i in 1:NROW(tweets1)) {
-  SumaRelevancia1 <- SumaRelevancia1 + tweets1[i, 34]
+tweetsArtistas$RelevanciaArtistaFP <-
+  tweetsArtistas$RelevanciaArtista * tweetsArtistas$factorPonderacion
+
+tweetsArtistas <- tweetsArtistas[order(tweetsArtistas$RelevanciaArtistaFP), ]
+
+tweetsArtistas$Percentil <- c(rep(NA,NROW(tweetsArtistas)))
+
+for (i in 1:NROW(tweetsArtistas)) {
+  tweetsArtistas[i,35] <- ((i-(0.5))/NROW(tweetsArtistas))*100
 }
 
-mediaRelevancia1FP <- SumaRelevancia1 / NROW(tweets1)
+tweetsArtistas$Votos <- c(rep(NA,NROW(tweetsArtistas)))
 
-df1 <-
-  data.frame("Joel Y Brian",
-             mediaRelevancia1,
-             mediaRelevancia1FP,
-             SumaRelevancia1)
-names(df1) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-
-######################################################################################
-######################################################################################
-#Artista 2
-#enncontramos la relevancia sin ponderacion
-tweets2$RelevanciaArtista <-
-  ((tweets2$favoriteCount + tweets2$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets2$RelevanciaArtistaFP <-
-  tweets2$RelevanciaArtista * tweets2$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia2 <-
-  weighted.mean(x = tweets2$RelevanciaArtista,
-                w = tweets2$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia2 <- 0
-for (i in 1:NROW(tweets2)) {
-  SumaRelevancia2 <- SumaRelevancia2 + tweets2[i, 34]
+for (i in 1:NROW(tweetsArtistas)) {
+  if (tweetsArtistas[i,35] <= 50) {
+    tweetsArtistas[i,36] <- 1
+  } else if (tweetsArtistas[i,35] > 50 & tweetsArtistas[i,35] <= 75) {
+    tweetsArtistas[i,36] <- 2
+  } else if (tweetsArtistas[i,35] > 75 & tweetsArtistas[i,35] <= 90) {
+    tweetsArtistas[i,36] <- 3
+  } else if (tweetsArtistas[i,35] > 90 & tweetsArtistas[i,35] <= 95) {
+    tweetsArtistas[i,36] <- 4
+  } else {
+    tweetsArtistas[i,36] <- 5
+  }
 }
 
-mediaRelevancia2FP <- SumaRelevancia2 / NROW(tweets2)
 
-df2 <-
-  data.frame("Pablo Jara",
-             mediaRelevancia2,
-             mediaRelevancia2FP,
-             SumaRelevancia2)
-names(df2) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
+votos1 <- 0
+votos2 <- 0
+votos3 <- 0
+votos4 <- 0
+votos5 <- 0
+votos6 <- 0
+votos7 <- 0
+votos8 <- 0
+votos9 <- 0
+votos10 <- 0
+votos11 <- 0
+votos12 <- 0
+votos13 <- 0
+votos14 <- 0
+votos15 <- 0
+votos16 <- 0
 
-
-######################################################################################
-######################################################################################
-#Artista 3
-#enncontramos la relevancia sin ponderacion
-tweets3$RelevanciaArtista <-
-  ((tweets3$favoriteCount + tweets3$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets3$RelevanciaArtistaFP <-
-  tweets3$RelevanciaArtista * tweets3$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia3 <-
-  weighted.mean(x = tweets3$RelevanciaArtista,
-                w = tweets3$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia3 <- 0
-for (i in 1:NROW(tweets3)) {
-  SumaRelevancia3 <- SumaRelevancia3 + tweets3[i, 34]
+for (i in 1:NROW(tweetsArtistas)) {
+  if (tweetsArtistas[i,31]=="1") {
+     votos1 <- votos1 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="2") {
+    votos2 <- votos2 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="3") {
+    votos3 <- votos3 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="4") {
+    votos4 <- votos4 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="5") {
+    votos5 <- votos5 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="6") {
+    votos6 <- votos6 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="7") {
+    votos7 <- votos7 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="8") {
+    votos8 <- votos8 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="9") {
+    votos9 <- votos9 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="10") {
+    votos10 <- votos10 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="11") {
+    votos11 <- votos11 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="12") {
+    votos12 <- votos12 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="13") {
+    votos13 <- votos13 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="14") {
+    votos14 <- votos14 + tweetsArtistas[i,36]
+  } else if (tweetsArtistas[i,31]=="15") {
+    votos15 <- votos15 + tweetsArtistas[i,36]
+  } else {
+    votos16 <- votos16 + tweetsArtistas[i,36]
+  }
 }
 
-mediaRelevancia3FP <- SumaRelevancia3 / NROW(tweets3)
+df1 <- data.frame("Joel Y Brian",votos1)
+names(df1) <- c("Artista", "NumVotos")
 
-df3 <-
-  data.frame("Maluma",
-             mediaRelevancia3,
-             mediaRelevancia3FP,
-             SumaRelevancia3)
-names(df3) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
+df2 <- data.frame("Pablo Jara",votos2)
+names(df2) <- c("Artista", "NumVotos")
 
+df3 <- data.frame("Maluma",votos3)
+names(df3) <- c("Artista", "NumVotos")
 
-######################################################################################
-######################################################################################
-#Artista 4
-#enncontramos la relevancia sin ponderacion
-tweets4$RelevanciaArtista <-
-  ((tweets4$favoriteCount + tweets4$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets4$RelevanciaArtistaFP <-
-  tweets4$RelevanciaArtista * tweets4$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia4 <-
-  weighted.mean(x = tweets4$RelevanciaArtista,
-                w = tweets4$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia4 <- 0
-for (i in 1:NROW(tweets4)) {
-  SumaRelevancia4 <- SumaRelevancia4 + tweets4[i, 34]
-}
+df4 <- data.frame("Jesus Miranda - Chyno",votos4)
+names(df4) <- c("Artista", "NumVotos")
 
-mediaRelevancia4FP <- SumaRelevancia4 / NROW(tweets4)
+df5 <- data.frame("RKM & Ken-Y",votos5)
+names(df5) <- c("Artista", "NumVotos")
 
-df4 <-
-  data.frame("Jesus Miranda - Chyno",
-             mediaRelevancia4,
-             mediaRelevancia4FP,
-             SumaRelevancia4)
-names(df4) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
+df6 <- data.frame("JBalvin",votos6)
+names(df6) <- c("Artista", "NumVotos")
 
+df7 <- data.frame("Johann Vera",votos7)
+names(df7) <- c("Artista", "NumVotos")
 
-######################################################################################
-######################################################################################
-#Artista 5
-#enncontramos la relevancia sin ponderacion
-tweets5$RelevanciaArtista <-
-  ((tweets5$favoriteCount + tweets5$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets5$RelevanciaArtistaFP <-
-  tweets5$RelevanciaArtista * tweets5$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia5 <-
-  weighted.mean(x = tweets5$RelevanciaArtista,
-                w = tweets5$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia5 <- 0
-for (i in 1:NROW(tweets5)) {
-  SumaRelevancia5 <- SumaRelevancia5 + tweets5[i, 34]
-}
+df8 <- data.frame("Jostin Ramirez",votos8)
+names(df8) <- c("Artista", "NumVotos")
 
-mediaRelevancia5FP <- SumaRelevancia5 / NROW(tweets5)
+df9 <- data.frame("CNCO",votos9)
+names(df9) <- c("Artista", "NumVotos")
 
-df5 <-
-  data.frame("RKM & Ken-Y",
-             mediaRelevancia5,
-             mediaRelevancia5FP,
-             SumaRelevancia5)
-names(df5) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
+df10 <- data.frame("Wilson Franco",votos10)
+names(df10) <- c("Artista", "NumVotos")
 
+df11 <- data.frame("Marques",votos11)
+names(df11) <- c("Artista", "NumVotos")
 
-######################################################################################
-######################################################################################
-#Artista 6
-#enncontramos la relevancia sin ponderacion
-tweets6$RelevanciaArtista <-
-  ((tweets6$favoriteCount + tweets6$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets6$RelevanciaArtistaFP <-
-  tweets6$RelevanciaArtista * tweets6$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia6 <-
-  weighted.mean(x = tweets6$RelevanciaArtista,
-                w = tweets6$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia6 <- 0
-for (i in 1:NROW(tweets6)) {
-  SumaRelevancia6 <- SumaRelevancia6 + tweets6[i, 34]
-}
+df12 <- data.frame("Melibea",votos12)
+names(df12) <- c("Artista", "NumVotos")
 
-mediaRelevancia6FP <- SumaRelevancia6 / NROW(tweets6)
+df13 <- data.frame("Daniel Paez",votos13)
+names(df13) <- c("Artista", "NumVotos")
 
-df6 <-
-  data.frame("JBalvin",
-             mediaRelevancia6,
-             mediaRelevancia6FP,
-             SumaRelevancia6)
-names(df6) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
+df14 <- data.frame("Carlos Rivera",votos14)
+names(df14) <- c("Artista", "NumVotos")
 
+df15 <- data.frame("Sebastián Yatra",votos15)
+names(df15) <- c("Artista", "NumVotos")
 
-######################################################################################
-######################################################################################
-#Artista 7
-#enncontramos la relevancia sin ponderacion
-tweets7$RelevanciaArtista <-
-  ((tweets7$favoriteCount + tweets7$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets7$RelevanciaArtistaFP <-
-  tweets7$RelevanciaArtista * tweets7$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia7 <-
-  weighted.mean(x = tweets7$RelevanciaArtista,
-                w = tweets7$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia7 <- 0
-for (i in 1:NROW(tweets7)) {
-  SumaRelevancia7 <- SumaRelevancia7 + tweets7[i, 34]
-}
+df16 <- data.frame("Reik",votos16)
+names(df16) <- c("Artista", "NumVotos")
 
-mediaRelevancia7FP <- SumaRelevancia7 / NROW(tweets7)
-
-df7 <-
-  data.frame("Johann Vera",
-             mediaRelevancia7,
-             mediaRelevancia7FP,
-             SumaRelevancia7)
-names(df7) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-######################################################################################
-######################################################################################
-#Artista 8
-#enncontramos la relevancia sin ponderacion
-tweets8$RelevanciaArtista <-
-  ((tweets8$favoriteCount + tweets8$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets8$RelevanciaArtistaFP <-
-  tweets8$RelevanciaArtista * tweets8$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia8 <-
-  weighted.mean(x = tweets8$RelevanciaArtista,
-                w = tweets8$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia8 <- 0
-for (i in 1:NROW(tweets8)) {
-  SumaRelevancia8 <- SumaRelevancia8 + tweets8[i, 34]
-}
-
-mediaRelevancia8FP <- SumaRelevancia8 / NROW(tweets8)
-
-df8 <-
-  data.frame("Jostin Ramirez",
-             mediaRelevancia8,
-             mediaRelevancia8FP,
-             SumaRelevancia8)
-names(df8) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-######################################################################################
-######################################################################################
-#Artista 9
-#enncontramos la relevancia sin ponderacion
-tweets9$RelevanciaArtista <-
-  ((tweets9$favoriteCount + tweets9$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets9$RelevanciaArtistaFP <-
-  tweets9$RelevanciaArtista * tweets9$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia9 <-
-  weighted.mean(x = tweets9$RelevanciaArtista,
-                w = tweets9$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia9 <- 0
-for (i in 1:NROW(tweets9)) {
-  SumaRelevancia9 <- SumaRelevancia9 + tweets9[i, 34]
-}
-
-mediaRelevancia9FP <- SumaRelevancia9 / NROW(tweets9)
-
-df9 <-
-  data.frame("CNCO", mediaRelevancia9, mediaRelevancia9FP, SumaRelevancia9)
-names(df9) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-######################################################################################
-######################################################################################
-#Artista 10
-#enncontramos la relevancia sin ponderacion
-tweets10$RelevanciaArtista <-
-  ((tweets10$favoriteCount + tweets10$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets10$RelevanciaArtistaFP <-
-  tweets10$RelevanciaArtista * tweets10$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia10 <-
-  weighted.mean(x = tweets10$RelevanciaArtista,
-                w = tweets10$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia10 <- 0
-for (i in 1:NROW(tweets10)) {
-  SumaRelevancia10 <- SumaRelevancia10 + tweets10[i, 34]
-}
-
-mediaRelevancia10FP <- SumaRelevancia10 / NROW(tweets10)
-
-df10 <-
-  data.frame("Wilson Franco",
-             mediaRelevancia10,
-             mediaRelevancia10FP,
-             SumaRelevancia10)
-names(df10) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-######################################################################################
-######################################################################################
-#Artista 11
-#enncontramos la relevancia sin ponderacion
-tweets11$RelevanciaArtista <-
-  ((tweets11$favoriteCount + tweets11$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets11$RelevanciaArtistaFP <-
-  tweets11$RelevanciaArtista * tweets11$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia11 <-
-  weighted.mean(x = tweets11$RelevanciaArtista,
-                w = tweets11$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia11 <- 0
-for (i in 1:NROW(tweets11)) {
-  SumaRelevancia11 <- SumaRelevancia11 + tweets11[i, 34]
-}
-
-mediaRelevancia11FP <- SumaRelevancia11 / NROW(tweets11)
-
-df11 <-
-  data.frame("Marques",
-             mediaRelevancia11,
-             mediaRelevancia11FP,
-             SumaRelevancia11)
-names(df11) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-
-
-######################################################################################
-######################################################################################
-#Artista 12
-#enncontramos la relevancia sin ponderacion
-tweets12$RelevanciaArtista <-
-  ((tweets12$favoriteCount + tweets12$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets12$RelevanciaArtistaFP <-
-  tweets12$RelevanciaArtista * tweets12$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia12 <-
-  weighted.mean(x = tweets12$RelevanciaArtista,
-                w = tweets12$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia12 <- 0
-for (i in 1:NROW(tweets12)) {
-  SumaRelevancia12 <- SumaRelevancia12 + tweets12[i, 34]
-}
-
-mediaRelevancia12FP <- SumaRelevancia12 / NROW(tweets12)
-
-df12 <-
-  data.frame("Melibea",
-             mediaRelevancia12,
-             mediaRelevancia12FP,
-             SumaRelevancia12)
-names(df12) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-
-
-
-######################################################################################
-######################################################################################
-#Artista 13
-#enncontramos la relevancia sin ponderacion
-tweets13$RelevanciaArtista <-
-  ((tweets13$favoriteCount + tweets13$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets13$RelevanciaArtistaFP <-
-  tweets13$RelevanciaArtista * tweets13$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia13 <-
-  weighted.mean(x = tweets13$RelevanciaArtista,
-                w = tweets13$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia13 <- 0
-for (i in 1:NROW(tweets13)) {
-  SumaRelevancia13 <- SumaRelevancia13 + tweets13[i, 34]
-}
-
-mediaRelevancia13FP <- SumaRelevancia13 / NROW(tweets13)
-
-df13 <-
-  data.frame("Daniel Paez",
-             mediaRelevancia13,
-             mediaRelevancia13FP,
-             SumaRelevancia13)
-names(df13) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-######################################################################################
-######################################################################################
-#Artista 14
-#enncontramos la relevancia sin ponderacion
-tweets14$RelevanciaArtista <-
-  ((tweets14$favoriteCount + tweets14$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets14$RelevanciaArtistaFP <-
-  tweets14$RelevanciaArtista * tweets14$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia14 <-
-  weighted.mean(x = tweets14$RelevanciaArtista,
-                w = tweets14$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia14 <- 0
-for (i in 1:NROW(tweets14)) {
-  SumaRelevancia14 <- SumaRelevancia14 + tweets14[i, 34]
-}
-
-mediaRelevancia14FP <- SumaRelevancia14 / NROW(tweets14)
-
-df14 <-
-  data.frame("Carlos Rivera",
-             mediaRelevancia14,
-             mediaRelevancia14FP,
-             SumaRelevancia14)
-names(df14) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-
-######################################################################################
-######################################################################################
-#Artista 15
-#enncontramos la relevancia sin ponderacion
-tweets15$RelevanciaArtista <-
-  ((tweets15$favoriteCount + tweets15$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets15$RelevanciaArtistaFP <-
-  tweets15$RelevanciaArtista * tweets15$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia15 <-
-  weighted.mean(x = tweets15$RelevanciaArtista,
-                w = tweets15$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia15 <- 0
-for (i in 1:NROW(tweets15)) {
-  SumaRelevancia15 <- SumaRelevancia15 + tweets15[i, 34]
-}
-
-mediaRelevancia15FP <- SumaRelevancia15 / NROW(tweets15)
-
-df15 <-
-  data.frame("Sebastián Yatra",
-             mediaRelevancia15,
-             mediaRelevancia15FP,
-             SumaRelevancia15)
-names(df15) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-######################################################################################
-######################################################################################
-#Artista 16
-#enncontramos la relevancia sin ponderacion
-tweets16$RelevanciaArtista <-
-  ((tweets16$favoriteCount + tweets16$retweetCount) / totalTweets)
-#encontramos la relevancia con ponderacion
-tweets16$RelevanciaArtistaFP <-
-  tweets16$RelevanciaArtista * tweets16$factorPonderacion
-#Encontramos la media ponderada con función de R
-mediaRelevancia16 <-
-  weighted.mean(x = tweets16$RelevanciaArtista,
-                w = tweets16$factorPonderacion)
-#Encontramos la media ponderada sin función de R
-SumaRelevancia16 <- 0
-for (i in 1:NROW(tweets16)) {
-  SumaRelevancia16 <- SumaRelevancia16 + tweets16[i, 34]
-}
-
-mediaRelevancia16FP <- SumaRelevancia16 / NROW(tweets16)
-
-df16 <-
-  data.frame("Reik",
-             mediaRelevancia16,
-             mediaRelevancia16FP,
-             SumaRelevancia16)
-names(df16) <- c("Artista", "MediaConFuncion", "MediaSinFuncion", "Suma")
-
-
-TablaRelevancias <-
+TotalVotos <-
   rbind(df1,
         df2,
         df3,
@@ -823,42 +490,16 @@ TablaRelevancias <-
         df16)
 
 
-#########################GRÁFICOS
-
-## Media de Relevancia con función de R
 #Diagrama de pastel
-mf <- as.array(TablaRelevancias$MediaConFuncion)
-names(mf) <- as.array(TablaRelevancias$Artista)
-pie(mf, col = rainbow(16), main = "Relevancias")
+mf <- as.array(TotalVotos$NumVotos)
+names(mf) <- as.array(TotalVotos$Artista)
+pie(mf, col = rainbow(16), main = "Numero Votos")
+
+
 #Diagrama de barras
 barplot(
-  height = TablaRelevancias$MediaConFuncion,
-  names.arg = TablaRelevancias$Artista,
+  height = TotalVotos$NumVotos,
+  names.arg = TotalVotos$Artista,
   col = rainbow(16)
 )
 
-
-## Media de Relevancia sin función de R
-#Diagrama de pastel
-mf <- as.array(TablaRelevancias$MediaSinFuncion)
-names(mf) <- as.array(TablaRelevancias$CodArtista)
-pie(mf, col = rainbow(16), main = "Relevancias")
-#Diagrama de barras
-barplot(
-  height = TablaRelevancias$MediaSinFuncion,
-  names.arg = TablaRelevancias$CodArtista,
-  col = rainbow(16)
-)
-
-
-## Suma de Relevancia
-#Diagrama de pastel
-mf <- as.array(TablaRelevancias$Suma)
-names(mf) <- as.array(TablaRelevancias$CodArtista)
-pie(mf, col = rainbow(16), main = "Relevancias")
-#Diagrama de barras
-barplot(
-  height = TablaRelevancias$Suma,
-  names.arg = TablaRelevancias$CodArtista,
-  col = rainbow(16)
-)

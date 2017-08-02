@@ -83,7 +83,7 @@ for (i in 1:NROW(tweets)) {
 }
 
 
-#RELEVANCIA
+#RELEVANCIA (ya no nos sirve)
 
 #calculamos la metrica de seguidores/seguidos
 tweets$relevancia <- c(rep(0, NROW(tweets)))
@@ -97,6 +97,8 @@ for(i in 1:NROW(tweets)) {
 #Aprendizaje Supervisado y Aprendizaje No Supervisado
 
 #APRENDIZAJE SUPERVISADO
+
+
 
 #separamos los datos de entrenamiento, para ello hemos calculado primero el tamaño de muestra
 #y aleatoriamente escogemos los tweets de entrenamiento
@@ -136,17 +138,17 @@ matriz <- create_matrix(TweetsFinal$text,
 # que en este caso es la polaridad
 contenedor <- create_container(matriz, TweetsFinal$polaridadSVM,
                                trainSize = 1:367,
-                               testSize = 368:8066,
+                               testSize = 368:8065,
                                virgin = FALSE)
 
 # Con el comando train_model vamos a crear el modelo SVM
-model <- train_model(contenedor, "SVM")
+model <- train_model(contenedor, "SVM", kernel="linear")
 
 # Con el comando classify_model clasificaremos los tweets de prueba
 clasificacion <- classify_model(contenedor, model)
 
 # Añadimos la clasificación de los tweets de prueba en el dataframe
-TweetsFinal$polaridadSVM[368:8066] <- as.numeric(clasificacion$SVM_LABEL)-1
+TweetsFinal$polaridadSVM[368:8065] <- as.numeric(clasificacion$SVM_LABEL)-1
 
 
 

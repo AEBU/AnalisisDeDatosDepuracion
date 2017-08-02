@@ -1,7 +1,7 @@
 #filtramos solo polaridad 1 con SVM
 
 TweetsPositivos <-
-  subset(TweetsFinal, TweetsFinal$polaridadSVM == 1)
+  subset(TweetsFinal, TweetsFinal$polaridadDiccionarios == 1)
 library(tm)
 
 
@@ -11,6 +11,7 @@ corpus = tm_map(
   removeWords,
   c(
     stopwords("spanish"),
+    "mejor","quiero","cancion","takashijakome","holaa","X00a0","entradas","cobijasquito","heydj",
     "marcoscumba",
     "porfaa",
     "madelayne",
@@ -83,7 +84,25 @@ corpus = tm_map(
     "duaubdedubua",
     "universalmusice",
     "remix",
-    "duaubdedubucquisiera"
+    "duaubdedubucquisiera",
+    "oscar",
+    "ctor",
+    "nombre",
+    "manuel",
+    "colon",
+    "willie",
+    "amigos",
+    "leon",
+    "faraon",
+    "manuelle",
+    "gitana",
+    "melanie",
+    "victor",
+    "salsaviva",
+    "boris",
+    "quinde",
+    "ddlovato",
+    "willy","X00a0"
   )
 )
 frequencies = DocumentTermMatrix(corpus)
@@ -95,12 +114,12 @@ tweetsDePeticiones = as.data.frame(as.matrix(frequencies))
 
 colnames(tweetsDePeticiones) = make.names(colnames(tweetsDePeticiones))
 
-
 library(wordcloud)
 
 
 
 positivas = as.data.frame(colSums(tweetsDePeticiones))
+#View(positivas)
 positivas$word = row.names(positivas)
 colnames(positivas) = c("frecuencia", "palabra")
 positivas = positivas[order(positivas$frecuencia, decreasing = T),]
@@ -112,10 +131,8 @@ wordcloud(
   positivas$frecuencia,
   colors = brewer.pal(8, "Dark2"),
   max.words = 85,
-  min.freq = 17
+  min.freq = 5
 )
-
-
 
 
 
@@ -389,7 +406,7 @@ votos16 <- 0
 
 for (i in 1:NROW(tweetsArtistas)) {
   if (tweetsArtistas[i,31]=="1") {
-     votos1 <- votos1 + tweetsArtistas[i,36]
+    votos1 <- votos1 + tweetsArtistas[i,36]
   } else if (tweetsArtistas[i,31]=="2") {
     votos2 <- votos2 + tweetsArtistas[i,36]
   } else if (tweetsArtistas[i,31]=="3") {
@@ -502,4 +519,3 @@ barplot(
   names.arg = TotalVotos$Artista,
   col = rainbow(16)
 )
-

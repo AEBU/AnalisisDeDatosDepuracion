@@ -62,17 +62,13 @@ clasificacionSigmoide <- classify_model(contenedor1, modeloSigmoide)
 
 ###obtenemos la tabla de confusion para cada kernel
 
-table(clasificacionLineal$SVM_LABEL,
-      y,
+table(y, clasificacionLineal$SVM_LABEL,
       dnn = c("Real", "Predicho"))
-table(clasificacionRadial$SVM_LABEL,
-      y,
+table(y, clasificacionRadial$SVM_LABEL,
       dnn = c("Real", "Predicho"))
-table(clasificacionPolinomial$SVM_LABEL,
-      y,
+table(y, clasificacionPolinomial$SVM_LABEL,
       dnn = c("Real", "Predicho"))
-table(clasificacionSigmoide$SVM_LABEL,
-      y,
+table(y, clasificacionSigmoide$SVM_LABEL,
       dnn = c("Real", "Predicho"))
 
 
